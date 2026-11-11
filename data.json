@@ -1,0 +1,30 @@
+{
+  "lists": {
+    "john": [
+      {
+        "id": 1,
+        "naam": "Fietscomputer",
+        "beschrijving": "GPS-based, min 40u batterij, compatibel met ant+ sensoren",
+        "prijs": 150,
+        "link": "https://www.bol.com/nl/nl/p/voorbeeld",
+        "categorie": ["sport", "electronica"],
+        "datumToegevoegd": "2026-11-11",
+        "status": "vrij",
+        "image": "",
+        "prioriteit": 2
+      },
+      {
+        "id": 2,
+        "naam": "Wrench set",
+        "beschrijving": "",
+        "prijs": 35,
+        "link": "",
+        "categorie": ["huishouden"],
+        "datumToegevoegd": "2026-11-11",
+        "status": "vrij",
+        "image": "",
+        "prioriteit": 3
+      }
+    ]
+  }
+}

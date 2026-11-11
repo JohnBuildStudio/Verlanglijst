@@ -1,16 +1,115 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Verlanglijst</title>
   <style>
-    body { font-family: system-ui, sans-serif; max-width: 600px; margin: 2rem auto; padding: 0 1rem; }
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 1.5rem auto;
+           padding: 0 1rem; background: #fafafa; color: #222; }
     h1 { color: #6d4aff; }
+    .wens { background: white; border-radius: 12px; padding: 1rem; margin-bottom: 0.75rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .wens h2 { margin: 0 0 0.25rem; font-size: 1.05rem; }
+    .omschrijving { margin: 0.25rem 0 0.5rem; font-size: 0.9rem; color: #555; }
+    .prijs { font-weight: bold; color: #6d4aff; }
+    .badge { font-size: 0.75rem; padding: 0.15rem 0.6rem; border-radius: 999px; }
+    .vrij { background: #e3f7e3; color: #1a7a1a; }
+    .gereserveerd { background: #ffe3e3; color: #a11; }
+    .kado-gegeven { background: #e3e3e3; color: #666; }
+    .chip { display: inline-block; font-size: 0.75rem; background: #f0f0f0; color: #555;
+            padding: 0.15rem 0.6rem; border-radius: 999px; margin-left: 0.3rem; }
+    a { color: #6d4aff; }
+    .fout { background: #fff3cd; padding: 1rem; border-radius: 8px; }
+    .demobanner { background: #e3f2ff; padding: 1rem; border-radius: 8px; margin-bottom: 0.75rem; }
   </style>
 </head>
 <body>
-  <h1>Hello World 🎉</h1>
-  <p>De verlanglijst komt hier.</p>
+  <h1>Verlanglijst 🎁</h1>
+  <p>Iets gaan jullie iemand graag verrassen — de lijst zegt wat nog vrij is.</p>
+  <div id="lijst">Laden…</div>
+
+  <script>
+    // Demo-data als data.json niet bereikbaar is (bv. lokaal file:// preview)
+    const MOCK_DATA = {
+      lists: {
+        john: [
+          { id: 1, naam: "MOCK Fietscomputer", beschrijving: "Demo-item: data.json niet gevonden",
+            prijs: 150, link: "", categorie: ["sport", "demo"],
+            datumToegevoegd: "2026-11-11", status: "vrij", image: "", prioriteit: 2 },
+          { id: 2, naam: "MOCK Kookboek", beschrijving: "",
+            prijs: 25, link: "https://example.com",
+            categorie: ["keuken"], datumToegevoegd: "2026-11-11",
+            status: "gereserveerd", image: "", prioriteit: 3 }
+        ]
+      }
+    };
+
+    function esc(t) {
+      const d = document.createElement("div");
+      d.textContent = t;
+      return d.innerHTML;
+    }
+
+    function maakKaart(wens) {
+      const gereserveerd = wens.status !== "vrij";
+
+      const div = document.createElement("div");
+      div.className = "wens";
+      div.title = "Toegevoegd op " + (wens.datumToegevoegd || "onbekende datum");
+
+      let html =
+        "<h2>" + esc(wens.naam) + "</h2>" +
+        "<span class='prijs'>€ " + wens.prijs + "</span>" +
+        " <span class='badge " + wens.status + "'>" + esc(wens.status) + "</span>";
+
+      for (const c of (wens.categorie || [])) {
+        html += " <span class='chip'>" + esc(c) + "</span>";
+      }
+
+      if (wens.beschrijving) {
+        html += "<p class='omschrijving'>" + esc(wens.beschrijving) + "</p>";
+      }
+
+      div.innerHTML = html;
+
+      if (wens.link) {
+        const a = document.createElement("a");
+        a.href = wens.link;
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.textContent = "Bekijk →";
+        div.appendChild(a);
+      }
+
+      return div;
+    }
+
+    function renderLijst(data, container) {
+      container.innerHTML = "";
+      for (const wens of data.lists.john) {
+        container.appendChild(maakKaart(wens));
+      }
+    }
+
+    async function laad() {
+      const container = document.getElementById("lijst");
+      let data;
+      try {
+        const resp = await fetch("data.json");
+        if (!resp.ok) throw new Error("HTTP " + resp.status);
+        data = await resp.json();
+        renderLijst(data, container);
+      } catch (e) {
+        data = MOCK_DATA;
+        renderLijst(data, container);
+        container.insertAdjacentHTML("afterbegin",
+          "<div class='demobanner'>⚠️ Demo-modus — echte data.json niet gevonden. " +
+          "Werkt wel wanneer de site online staat.</div>");
+      }
+    }
+
+    laad();
+  </script>
 </body>
 </html>
