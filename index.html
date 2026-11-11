@@ -5,12 +5,60 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Verlanglijst</title>
   <style>
-    body { font-family: system-ui, sans-serif; max-width: 600px; margin: 2rem auto; padding: 0 1rem; }
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 1.5rem auto; padding: 0 1rem; background: #fafafa; }
     h1 { color: #6d4aff; }
+    .wens { background: white; border-radius: 12px; padding: 1rem; margin-bottom: 0.75rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .wens h2 { margin: 0 0 0.25rem; font-size: 1.05rem; }
+    .prijs { font-weight: bold; color: #6d4aff; }
+    .badge { font-size: 0.75rem; padding: 0.15rem 0.6rem; border-radius: 999px; }
+    .vrij { background: #e3f7e3; color: #1a7a1a; }
+    .gereserveerd { background: #ffe3e3; color: #a11; }
+    .fout { background: #fff3cd; padding: 1rem; border-radius: 8px; }
+    button { margin-top: 0.5rem; padding: 0.5rem 1rem; border: none; border-radius: 8px;
+             background: #6d4aff; color: white; font-size: 0.95rem; }
   </style>
 </head>
 <body>
-  <h1>Hello World 🎉</h1>
-  <p>De verlanglijst komt hier.</p>
+  <h1>Verlanglijst 🎁</h1>
+  <p>Klik op reserveren en stuur me een WhatsAppje!</p>
+  <div id="lijst">Laden…</div>
+
+  <script>
+    const WHATSAPP_NUMMER = "324XXXXXXXXX"; // jouw gsm in internationaal formaat, zonder +
+
+    async function laad() {
+      const container = document.getElementById("lijst");
+      try {
+        const resp = await fetch("data.json");
+        if (!resp.ok) throw new Error("HTTP " + resp.status);
+        const data = await resp.json();
+        container.innerHTML = "";
+        for (const wens of data.lists.john) {
+          const gereserveerd = wens.status === "gereserveerd";
+          const div = document.createElement("div");
+          div.className = "wens";
+          div.innerHTML =
+            "<h2>" + wens.naam + "</h2>" +
+            "<span class='prijs'>€ " + wens.prijs + "</span> " +
+            "<span class='badge " + wens.status + "'>" + wens.status + "</span><br>" +
+            "<a href='" + wens.link + "' target='_blank'>Bekijk →</a> ";
+          if (!gereserveerd) {
+            const btn = document.createElement("button");
+            btn.textContent = "Reserveer";
+            btn.onclick = () => {
+              const msg = encodeURIComponent("Ik reserveer: " + wens.naam + " (€ " + wens.prijs + ")");
+              window.open("https://wa.me/" + WHATSAPP_NUMMER + "?text=" + msg);
+            };
+            div.appendChild(btn);
+          }
+          container.appendChild(div);
+        }
+      } catch (e) {
+        container.innerHTML = "<div class='fout'>Oeps, de lijst kon niet geladen worden. Probeer later opnieuw.</div>";
+      }
+    }
+    laad();
+  </script>
 </body>
 </html>
