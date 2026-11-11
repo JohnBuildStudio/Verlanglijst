@@ -5,7 +5,7 @@
         "id": 1,
         "naam": "Fietscomputer",
         "beschrijving": "GPS-based, min 40u batterij, compatibel met ant+ sensoren",
-        "prijs": 150,
+        "prijs": 10,
         "link": "https://www.bol.com/nl/nl/p/voorbeeld",
         "categorie": ["sport", "electronica"],
         "datumToegevoegd": "2026-11-11",
